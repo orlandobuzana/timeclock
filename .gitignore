@@ -1,4 +1,37 @@
-*.log
-*.pot
+# Static directory from ./manage collectstatic #
+################################################
+/static/
+
+# IDE settings files #
+# ####################
+.project
+.ropeproject
+
+# Compiled Source #
+###################
 *.pyc
-local_settings.py
+
+# Logs and Databases #
+######################
+*.db
+*.db-journal
+*.log
+
+# Editor backup files #
+#######################
+.*.swp
+.*.swo
+*~
+hardcopy.*
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+screenlog.*
