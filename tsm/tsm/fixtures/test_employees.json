@@ -1,0 +1,53 @@
+[
+{
+    "pk": 1, 
+    "model": "tsm.employee", 
+    "fields": {
+        "username": "HourlyUser", 
+        "salary": null, 
+        "first_name": "Hourly", 
+        "last_name": "User", 
+        "last_login": "2013-04-29T03:43:13.924Z", 
+        "permission": "EM", 
+        "salaried": false, 
+        "password": "", 
+        "email": "hourlyUser@test.com", 
+        "projects": [], 
+        "hourly_rate": 10.00
+    }
+},
+{
+    "pk": 2, 
+    "model": "tsm.employee", 
+    "fields": {
+        "username": "ManagerUser", 
+        "salary": null, 
+        "first_name": "Hourly", 
+        "last_name": "User", 
+        "last_login": "2013-04-29T03:43:13.924Z", 
+        "permission": "MG", 
+        "salaried": false, 
+        "password": "", 
+        "email": "managerUser@test.com", 
+        "projects": [], 
+        "hourly_rate": 15.00
+    }
+},
+{
+    "pk": 3,
+    "model": "tsm.employee", 
+    "fields": {
+        "username": "OwnerUser", 
+        "salary": 100000.00, 
+        "first_name": "Owner", 
+        "last_name": "User", 
+        "last_login": "2013-04-29T03:43:13.924Z", 
+        "permission": "OW", 
+        "salaried": true, 
+        "password": "", 
+        "email": "ownerUser@test.com", 
+        "projects": [], 
+        "hourly_rate": 15.00
+    }
+}
+]
