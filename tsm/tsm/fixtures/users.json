@@ -1,0 +1,15 @@
+[
+{
+    "pk": 1, 
+    "model": "tsm.user", 
+    "fields": {
+        "username": "bmurphy", 
+        "first_name": "Bretton", 
+        "last_name": "Murphy", 
+        "last_login": "2013-04-29T03:43:13.924Z", 
+        "date_joined": "2013-04-29T03:43:13.924Z", 
+        "password": "", 
+        "email": "bmurphy@gmail.com"
+    }
+}
+]

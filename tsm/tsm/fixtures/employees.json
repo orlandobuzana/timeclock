@@ -3,15 +3,8 @@
     "pk": 1, 
     "model": "tsm.employee", 
     "fields": {
-        "username": "bmurphy", 
         "salary": null, 
-        "first_name": "Bretton", 
-        "last_name": "Murphy", 
-        "last_login": "2013-04-29T03:43:13.924Z", 
-        "permission": "EM", 
         "salaried": false, 
-        "password": "", 
-        "email": "bmurphy@gmail.com", 
         "projects": [], 
         "hourly_rate": 10.00
     }
