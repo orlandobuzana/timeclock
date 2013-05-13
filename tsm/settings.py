@@ -1,6 +1,6 @@
 # Django settings for tsm project.
 
-AUTH_USER_MODEL = 'tsm.Employee'
+AUTH_USER_MODEL = 'tsm.User'
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

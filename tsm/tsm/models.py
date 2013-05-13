@@ -12,7 +12,6 @@ from django.db import models
 from django.core.exceptions import MultipleObjectsReturned
 
 class Project(models.Model):
-
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
     active = models.BooleanField(default=True)
@@ -21,37 +20,34 @@ class Project(models.Model):
         return self.name
 
 
-class EmployeeManager(models.Manager):
-
-    def get_by_natural_key(self, username):
-        return self.get(username=username)
-
-
-class Employee(AbstractBaseUser):
-    permissions = (
-        ('EM', 'Employee'),
-        ('MG', 'Manager'),
-        ('OW', 'Owner')
-    )
-
+class User(AbstractBaseUser):
     username = models.CharField(max_length=15, unique=True, db_index=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     email = models.EmailField(max_length=254)
+    is_active = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    date_joined = models.DateTimeField()
+
+    USERNAME_FIELD = "username"
+
+
+class EmployeeManager(models.Manager):
+    def get_by_natural_key(self, username):
+        return self.get(username=username)
+
+
+class Employee(User):
     hourly_rate = models.DecimalField(null=True, blank=True, decimal_places=2, max_digits=6)
     salary = models.DecimalField(null=True, blank=True, decimal_places=2, max_digits=9)
     salaried = models.BooleanField(default=False)
     projects = models.ManyToManyField(Project)
-    permission = models.CharField(choices=permissions, default="EM", max_length=2)
-
-    USERNAME_FIELD = "username"
 
     def __unicode__(self):
         return self.first_name + " " + self.last_name
 
-
 class ShiftManager(models.Manager):
-    
     def clocked_in(self, employee):
         '''
             Checks if an Employee is clocked in or not.
@@ -77,16 +73,19 @@ class ShiftManager(models.Manager):
 
 
 class Shift(models.Model):
-
-    shift_start = models.IntegerField()
-    shift_end = models.IntegerField(null=True, blank=True)
+    shift_start = models.DateTimeField()
+    shift_end = models.DateTimeField(null=True, blank=True)
     hours = models.DecimalField(null=True, blank=True, decimal_places=2, max_digits=4)
     employee = models.ForeignKey(Employee)
-    project = models.ForeignKey(Project, blank=True, null=True)
-    miles = models.DecimalField(null=True, blank=True, decimal_places=2, max_digits=6)
     
     objects = ShiftManager()
 
 
+class ShiftSummary(models.Model):
+    shift = models.ForeignKey(Shift)
+    miles = models.DecimalField(null=True, blank=True, decimal_places=2, max_digits=6)
+    notes = models.TextField(blank=True)
+    project = models.ForeignKey(Project)
+    hours = models.DecimalField(decimal_places=2, max_digits=4)
 
 
