@@ -1,17 +1,55 @@
 [
 {
     "pk": 1, 
-    "model": "tsm.employee", 
+    "model": "tsm.user",
     "fields": {
         "username": "HourlyUser", 
-        "salary": null, 
         "first_name": "Hourly", 
         "last_name": "User", 
         "last_login": "2013-04-29T03:43:13.924Z", 
-        "permission": "EM", 
-        "salaried": false, 
+        "date_joined": "2013-04-29T03:43:13.924Z", 
         "password": "", 
         "email": "hourlyUser@test.com", 
+        "is_admin": false,
+        "is_superuser": false
+    }
+},
+{
+    "pk": 2, 
+    "model": "tsm.user",
+    "fields": {
+        "username": "AdminUser", 
+        "first_name": "Hourly", 
+        "last_name": "User", 
+        "last_login": "2013-04-29T03:43:13.924Z", 
+        "date_joined": "2013-04-29T03:43:13.924Z", 
+        "password": "", 
+        "email": "managerUser@test.com", 
+        "is_admin": true,
+        "is_superuser": false
+    }
+},
+{
+    "pk": 3,
+    "model": "tsm.user",
+    "fields": {
+        "username": "SuperUser", 
+        "first_name": "Owner", 
+        "last_name": "User", 
+        "last_login": "2013-04-29T03:43:13.924Z", 
+        "date_joined": "2013-04-29T03:43:13.924Z", 
+        "password": "", 
+        "email": "ownerUser@test.com", 
+        "is_admin": false,
+        "is_superuser": true
+    }
+},
+{
+    "pk": 1, 
+    "model": "tsm.employee", 
+    "fields": {
+        "salary": null, 
+        "salaried": false, 
         "projects": [], 
         "hourly_rate": 10.00
     }
@@ -20,15 +58,8 @@
     "pk": 2, 
     "model": "tsm.employee", 
     "fields": {
-        "username": "ManagerUser", 
         "salary": null, 
-        "first_name": "Hourly", 
-        "last_name": "User", 
-        "last_login": "2013-04-29T03:43:13.924Z", 
-        "permission": "MG", 
         "salaried": false, 
-        "password": "", 
-        "email": "managerUser@test.com", 
         "projects": [], 
         "hourly_rate": 15.00
     }
@@ -37,15 +68,8 @@
     "pk": 3,
     "model": "tsm.employee", 
     "fields": {
-        "username": "OwnerUser", 
         "salary": 100000.00, 
-        "first_name": "Owner", 
-        "last_name": "User", 
-        "last_login": "2013-04-29T03:43:13.924Z", 
-        "permission": "OW", 
         "salaried": true, 
-        "password": "", 
-        "email": "ownerUser@test.com", 
         "projects": [], 
         "hourly_rate": 15.00
     }
