@@ -71,8 +71,12 @@ class Employee(User):
     def _projects(self):
         return self.projects.filter(is_active=True)
 
+    def _active(self):
+        return self.is_active
+
     clocked_in = property(_clocked_in)
     active_projects = property(_projects)
+    active = property(_active)
 
 
 class ShiftManager(models.Manager):
