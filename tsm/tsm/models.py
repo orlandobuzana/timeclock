@@ -116,7 +116,7 @@ class Shift(models.Model):
         if self.shift_end is None:
             self.hours = 0.0
         elif self.shift_start is not None and self.shift_end is not None:
-            diff = self.shift_end - self.shift_start
+            diff = (self.shift_end - self.shift_start).total_seconds()
             self.hours = Decimal(diff/3600.0).quantize(Decimal('1.00'))
 
         super(Shift, self).save(*args, **kwargs)
