@@ -7,7 +7,7 @@
 """
 
 # System Impots
-from django.contrib.auth.models import AbstractBaseUser, AbstractBaseManager
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 from django.core.exceptions import MultipleObjectsReturned
 from decimal import Decimal
