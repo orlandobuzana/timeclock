@@ -10,6 +10,7 @@
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 from django.core.exceptions import MultipleObjectsReturned
+from decimal import Decimal
 
 class Project(models.Model):
     name = models.CharField(max_length=50)
@@ -47,6 +48,11 @@ class Employee(User):
     def __unicode__(self):
         return self.first_name + " " + self.last_name
 
+    def _clocked_in(self):
+        return Shift.objects.clocked_in(self)
+
+    clocked_in = property(_clocked_in)
+
 class ShiftManager(models.Manager):
     def clocked_in(self, employee):
         '''
@@ -80,6 +86,14 @@ class Shift(models.Model):
     
     objects = ShiftManager()
 
+    def save(self, *args, **kwargs):
+        if self.shift_end is None:
+            self.hours = 0.0
+        elif self.shift_start is not None and self.shift_end is not None:
+            diff = self.shift_end - self.shift_start
+            self.hours = Decimal(diff/3600.0).quantize(Decimal('1.00'))
+
+        super(Shift, self).save(*args, **kwargs)
 
 class ShiftSummary(models.Model):
     shift = models.ForeignKey(Shift)
