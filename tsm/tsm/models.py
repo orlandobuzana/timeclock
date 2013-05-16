@@ -7,15 +7,26 @@
 """
 
 # System Impots
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, AbstractBaseManager
 from django.db import models
 from django.core.exceptions import MultipleObjectsReturned
 from decimal import Decimal
 
+
+class ProjectManager(models.Manager):
+    def active(self):
+        return self.filter(is_active=True)
+
+    def inactive(self):
+        return self.filter(is_active=False)
+
+
 class Project(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+
+    objects = ProjectManager()
 
     def __unicode__(self):
         return self.name
@@ -38,6 +49,12 @@ class EmployeeManager(models.Manager):
     def get_by_natural_key(self, username):
         return self.get(username=username)
 
+    def active(self):
+        return self.filter(is_active=True)
+
+    def inactive(self):
+        return self.filter(is_active=False)
+
 
 class Employee(User):
     hourly_rate = models.DecimalField(null=True, blank=True, decimal_places=2, max_digits=6)
@@ -51,7 +68,12 @@ class Employee(User):
     def _clocked_in(self):
         return Shift.objects.clocked_in(self)
 
+    def _projects(self):
+        return self.projects.filter(is_active=True)
+
     clocked_in = property(_clocked_in)
+    active_projects = property(_projects)
+
 
 class ShiftManager(models.Manager):
     def clocked_in(self, employee):
@@ -94,6 +116,7 @@ class Shift(models.Model):
             self.hours = Decimal(diff/3600.0).quantize(Decimal('1.00'))
 
         super(Shift, self).save(*args, **kwargs)
+
 
 class ShiftSummary(models.Model):
     shift = models.ForeignKey(Shift)
