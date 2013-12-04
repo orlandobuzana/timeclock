@@ -2,10 +2,12 @@ from django.conf.urls import patterns, include, url
 from django.views.generic import RedirectView
 from clocker.views.management import ManageView
 
+from clocker.decorators import login_exempt
 
 urlpatterns = patterns('',
     url(r'^$', RedirectView.as_view(url='/timeclock/')),
     url(r'chucho/', include('chucho.urls')),
+    url(r'^accounts/', include('allauth.urls'))
 )
 
 #Timesheet

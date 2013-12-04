@@ -46,6 +46,11 @@ except:
         }
     }
 
+try:
+    from local_settings import *
+except ImportError:
+    pass
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -58,7 +63,9 @@ TIME_ZONE = 'America/Denver'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
-SITE_ID = 1
+LOGIN_REDIRECT_URL = '/timeclock/'
+
+SITE_ID = 2
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -118,7 +125,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.core.context_processors.request',
-    'django.contrib.messages.context_processors.messages'
+    'django.contrib.messages.context_processors.messages',
+    'allauth.account.context_processors.account',
+    'allauth.socialaccount.context_processors.socialaccount'
 )
 
 # List of callables that know how to import templates from various sources.
@@ -126,6 +135,11 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.Loader',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -160,7 +174,11 @@ INSTALLED_APPS = (
     'clocker',
     'chucho',
     'south',
-    'bootstrap'
+    'bootstrap',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google'
 )
 
 # A sample logging configuration. The only tangible logging

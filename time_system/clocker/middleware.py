@@ -19,7 +19,11 @@ class CheckAccess():
             for dec in view_func._decorators:
                 if dec.__name__ == "login_exempt":
                     return None
-        
+       
+        if "/accounts/google/login/" in request.path:
+            return None
+        print request.user
+        print request.user.is_authenticated()
         #Boot back to login page
         if not request.user.is_authenticated():
             return HttpResponseRedirect('/timeclock/login/')
