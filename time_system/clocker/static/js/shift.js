@@ -36,17 +36,6 @@ $(function() {
 
 		}.bind(this);
 
-		this.getTimeInDate = function() {
-			if (!this.time_in())
-				return '';
-
-			var d = new Date(this.time_in());
-			var dateStr = (d.getMonth() + 1) + "/" +
-						  (d.getDate().length == 1 ? "0"+d.getDate() : d.getDate()) + "/" +
-						   d.getFullYear();
-			return dateStr;
-		}.bind(this);
-
 		this.summary = function() {
 			window.location = "/timeclock/summary/" + this.id();
 		}.bind(this);
@@ -64,16 +53,29 @@ $(function() {
 		}.bind(this);
 
 		this.bindInputs = function(e) {
-			$(e).find('.time-in-input').datetimepicker({
-                 showSecond: true
-                ,dateFormat: 'mm/dd/yy'
-                ,timeFormat: 'hh:mm:ss'
+			var timeInInput = $(e).find('.time-in-input');
+			var timeOutInput = $(e).find('.time-out-input');
+
+			$(timeInInput).datetimepicker({
+				 format: 'mm/dd/yyyy hh:ii:ss'
+				,autoclose: true
+				,todayHighlight: true
+				,endDate: $(timeOutInput).val()
 			})
-			$(e).find('.time-out-input').datetimepicker({
-                 showSecond: true
-                ,dateFormat: 'mm/dd/yy'
-                ,timeFormat: 'hh:mm:ss'
+		    .on('changeDate', function(ev) {
+		        $(timeOutInput).datetimepicker('setStartDate', $(ev.target).val());
+		    });
+
+			$(timeOutInput).datetimepicker({
+				 format: 'mm/dd/yyyy hh:ii:ss'
+				,autoclose: true
+				,todayHighlight: true
+				,startDate: $(timeInInput).val()
 			})
+		    .on('changeDate', function(ev) {
+		        $(timeInInput).datetimepicker('setEndDate', $(ev.target).val());
+		    });
+
 		}.bind(this)
 
 		this.update = function() {

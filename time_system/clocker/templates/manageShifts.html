@@ -1,9 +1,6 @@
 {% extends "base.html" %}
 
 {% block additional-headers %}
-<!--
-<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap-timepicker.min.css">
--->
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/manageShifts.css">
 {% endblock additional-headers %}
 
@@ -19,22 +16,10 @@
 		</td>
 		<td data-bind="text: shiftToEdit().employee().username"></td>
 		<td>
-			<input class="form-control  time-in-input" type="text" data-bind="value: shiftToEdit().time_in">
-			<!--
-			<ul class="list-inline">
-				<li><input class="form-control date-input icon-input" type="text" placeholder="Date"></li>
-				<li><input class="form-control time-input icon-input" type="text" placeholder="Time"></li>
-			</ul>
-			-->
+			<input class="form-control time-in-input" type="text" data-bind="value: shiftToEdit().time_in">
 		</td>
 		<td>
 			<input class="form-control time-out-input" type="text" data-bind="value: shiftToEdit().time_out">
-			<!--
-			<ul class="list-inline">
-				<li><input class="form-control date-input icon-input" type="text" placeholder="Date"></li>
-				<li><input class="form-control time-input icon-input" type="text" placeholder="Time"></li>
-			</ul>
-			-->
 		</td>
 		<td></td>
 	</tr>
