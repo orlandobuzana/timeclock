@@ -6,44 +6,44 @@ $(function() {
     });
 
 
-    $("#from").bootstrapDP({
-        'autoclose': true
-        ,'orientation': 'top'
-        ,'endDate': new Date()
-        ,'format': 'yyyy-mm-dd'
+    $("#from").datetimepicker({
+         autoclose:   true
+        ,format:      'mm/dd/yyyy'
+        ,minView:     2
     })
     .on('changeDate', function(ev) {
-        $('#to').bootstrapDP('setStartDate', ev.date);    
+        $('#to').datetimepicker('setStartDate', $(ev.target).val());
     });
 
-    $("#to").bootstrapDP({
-        'autoclose': true
-        ,'orientation': 'top'
-        ,'endDate': new Date()
-        ,'format': 'yyyy-mm-dd'
+    $("#to").datetimepicker({
+         autoclose:   true
+        ,format:      'mm/dd/yyyy'
+        ,minView:     2
     })
     .on('changeDate', function(ev) {
-        $('#from').bootstrapDP('setEndDate', ev.date);    
+        $('#from').datetimepicker('setEndDate', $(ev.target).val());
     });
 
 
-    $("#from-job").bootstrapDP({
-        'autoclose': true
-        ,'orientation': 'top'
-        ,'endDate': new Date()
-        ,'format': 'yyyy-mm-dd'
-    })
-    .on('changeDate', function(ev) {
-        $('#to-job').bootstrapDP('setStartDate', ev.date);    
-    });
+    // $("#from-job").datepicker({
+    //     'autoclose': true
+    //     ,'orientation': 'top'
+    //     ,'endDate': new Date()
+    //     ,'format': 'yyyy-mm-dd'
+    //     ,'pickTime': false
+    // })
+    // .on('changeDate', function(ev) {
+    //     $('#to-job').datepicker('setStartDate', ev.date);    
+    // });
 
-    $("#to-job").bootstrapDP({
-        'autoclose': true
-        ,'orientation': 'top'
-        ,'endDate': new Date()
-        ,'format': 'yyyy-mm-dd'
-    })
-    .on('changeDate', function(ev) {
-        $('#from-job').bootstrapDP('setEndDate', ev.date);    
-    });
+    // $("#to-job").datepicker({
+    //     'autoclose': true
+    //     ,'orientation': 'top'
+    //     ,'endDate': new Date()
+    //     ,'format': 'yyyy-mm-dd'
+    //     ,'pickTime': false
+    // })
+    // .on('changeDate', function(ev) {
+    //     $('#from-job').datepicker('setEndDate', ev.date);    
+    // });
 });
