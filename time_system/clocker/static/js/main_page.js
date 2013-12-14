@@ -25,25 +25,26 @@ $(function() {
     });
 
 
-    // $("#from-job").datepicker({
-    //     'autoclose': true
-    //     ,'orientation': 'top'
-    //     ,'endDate': new Date()
-    //     ,'format': 'yyyy-mm-dd'
-    //     ,'pickTime': false
-    // })
-    // .on('changeDate', function(ev) {
-    //     $('#to-job').datepicker('setStartDate', ev.date);    
-    // });
+    var fromJob = $("#from-job");
+    var toJob = $("#to-job");
 
-    // $("#to-job").datepicker({
-    //     'autoclose': true
-    //     ,'orientation': 'top'
-    //     ,'endDate': new Date()
-    //     ,'format': 'yyyy-mm-dd'
-    //     ,'pickTime': false
-    // })
-    // .on('changeDate', function(ev) {
-    //     $('#from-job').datepicker('setEndDate', ev.date);    
-    // });
+    $(fromJob).datetimepicker({
+         autoclose:   true
+        ,format:      'mm/dd/yyyy'
+        ,minView:     2
+        ,endDate:     $(fromJob).val()
+    })
+    .on('changeDate', function(ev) {
+        $('#to-job').datetimepicker('setStartDate', $(ev.target).val());
+    });
+
+    $(toJob).datetimepicker({
+         autoclose:   true
+        ,format:      'mm/dd/yyyy'
+        ,minView:     2
+        ,startDate:   $(fromJob).val()
+    })
+    .on('changeDate', function(ev) {
+        $('#from-job').datetimepicker('setEndDate', $(ev.target).val());
+    });
 });
