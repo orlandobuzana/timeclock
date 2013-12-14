@@ -10,6 +10,7 @@ from django.http import HttpResponse
 
 # Local Imports
 from clocker.models import Employee, Job, ShiftSummary
+from settings import D_FORMAT
 
 def jobBreakdown(request):
 
@@ -42,25 +43,23 @@ def getWeekdayRange(start=None, end=None):
     '
     ' Keyword Args:
     '   start     - (optional) Starting time to begin aggregating hours worked from. Should be a string in the format
-    '               %Y-%m-%d 
+    '               mm/dd/yyyy 
     '   end       - (optional) Ending time to begin aggregating hours worked to. Should be a string in the format 
-    '               %Y-%m-%d
+    '               mm/dd/yyyy
     '
     ' Returns: tuple (start, end) containing the start of a work week and the end of a work week
     '''
 
-    dateForm = "%Y-%m-%d"
-
     if (start is None or start == '') and end is not None and end != '':
-        end = datetime.strptime(end, dateForm)
+        end = datetime.strptime(end, D_FORMAT)
         start = end - timedelta(end.weekday())    
     elif (end is None or end == '') and start is not None and start != '':
-        start = datetime.strptime(start, dateForm)
+        start = datetime.strptime(start, D_FORMAT)
         startOfWeek = start - timedelta(start.weekday())
         end = startOfWeek + timedelta(6)
     elif end is not None and end != '' and start is not None and start != '':
-        start = datetime.strptime(start, dateForm)
-        end = datetime.strptime(end, dateForm)
+        start = datetime.strptime(start, D_FORMAT)
+        end = datetime.strptime(end, D_FORMAT)
     else:
         today = datetime.today()
         start = today - timedelta(today.weekday())
@@ -94,9 +93,9 @@ def getJobsBreakdown(employees=None, start=None, end=None):
     ' Keyword Args:
     '   employees - (optional) A list of Employees to aggregate their total hours worked on the jobs in the system.
     '   start     - (optional) Starting time to begin aggregating hours worked from. Should be a string in the format
-    '               %Y-%m-%d 
+    '               mm/dd/yyyy
     '   end       - (optional) Ending time to begin aggregating hours worked to. Should be a string in the format 
-    '               %Y-%m-%d
+    '               mm/dd/yyyy
     '
     ' Returns: A dictionary of jobs and their total percentage of hours that was worked for them.
     '          {

@@ -4,6 +4,7 @@ from clocker.models import Employee, Shift
 from datetime import timedelta, datetime, date
 from decimal import Decimal
 import check_db
+from settings import DT_FORMAT, D_FORMAT
 
 def total_hours(request):
 
@@ -26,11 +27,11 @@ def getPayPeriod(start_time, end_time, user_name):
     pay_period = {'weekly_info':[], 'period_total':0, 'period_adjusted':0, 'period_overtime':0,'period_regular':0} 
     #make sure we have actual date ranges coming in
     if(start_time == "" or end_time == ""):
-        start_time = datetime.strftime(datetime.now(), '%Y-%m-%d')
-        end_time = datetime.strftime(datetime.now(), '%Y-%m-%d')
+        start_time = datetime.strftime(datetime.now(), D_FORMAT)
+        end_time = datetime.strftime(datetime.now(), D_FORMAT)
 
-    start_date = datetime.strptime(start_time, '%Y-%m-%d')
-    end_date = datetime.strptime(end_time + " 23:59:59", '%Y-%m-%d %H:%M:%S')
+    start_date = datetime.strptime(start_time, D_FORMAT)
+    end_date = datetime.strptime(end_time + " 23:59:59", DT_FORMAT)
 
     #Get weekly period for our start and end range
     period_range = get_week_range(start_date, end_date)
