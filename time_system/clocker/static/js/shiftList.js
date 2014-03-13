@@ -8,6 +8,7 @@ $(function() {
 		var per_page = 25;
 
 		this.shifts = ko.observableArray();
+		this.newShift = ko.observable(new Shift());
 
         this.currentPage = ko.observable();
         this.totalPages = ko.observable();

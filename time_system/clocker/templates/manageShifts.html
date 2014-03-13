@@ -70,6 +70,10 @@
 				<th>Hours</th>
 			</thead>
 			<tbody>
+				{% if user.is_superuser %}
+				<!-- ko template: {name: "edit-shift-template", data: newShift} --><!-- /ko -->
+				{% endif %}
+
 				<!-- ko foreach: shifts -->
 			
 				<tr data-bind="ifnot: updating">

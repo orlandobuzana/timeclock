@@ -26,7 +26,7 @@ class ShiftView(View):
 
 
     @staticmethod
-    def updateClient(shift, jsonData, user):
+    def updateShift(shift, jsonData, user):
 
         try:
             params = json.loads(jsonData)
@@ -71,7 +71,16 @@ class ShiftView(View):
                 error = 'You do not have permission to edit this Shift'
                 return HttpResponseForbidden(json.dumps(error), content_type="application/json")
 
-        return ShiftView.updateClient(shift, request.read(), request.user)
+        return ShiftView.updateShift(shift, request.read(), request.user)
+
+
+    def post(self, request):
+
+        if not request.user.is_superuser:
+            error = "Invalid permissions"
+            return HttpResponseForbidden(json.dumps(error), content_type="application/json")
+
+        return ShiftView.updateShift(shift(), request.read(), request.user)
 
 
     def delete(self, request, shift_id):
