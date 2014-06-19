@@ -95,12 +95,14 @@ $(function() {
 
             if (state.hasOwnProperty('timesheet')) {
                 var collapsable = $("#timesheet-"+state.timesheet);
-                var targetTs = ko.dataFor(collapsable.get(0));
+                if (collapsable.get(0)) {
+                    var targetTs = ko.dataFor(collapsable.get(0));
 
-                //Wait till data is loaded before opening collapse
-                targetTs.loadPayData().then(function() {
-                    $(collapsable).collapse('show');
-                });
+                    //Wait till data is loaded before opening collapse
+                    targetTs.loadPayData().then(function() {
+                        $(collapsable).collapse('show');
+                    });
+                }
             }
 
         };
