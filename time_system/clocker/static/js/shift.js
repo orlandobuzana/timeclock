@@ -11,6 +11,8 @@ $(function() {
 		this.hours = ko.observable();
 		this.employee = ko.observable();
 
+		this.inTimesheet = ko.observable();
+
 		this.updating = ko.observable(false);
 		this.shiftToEdit = ko.observable();	
 
@@ -33,6 +35,8 @@ $(function() {
 				this.hours(vars.hours);
 			if (vars.hasOwnProperty('employee'))
 				this.employee(vars.employee);
+			if (vars.hasOwnProperty('inTimesheet'))
+				this.inTimesheet(vars.inTimesheet);
 
 		}.bind(this);
 

@@ -431,6 +431,7 @@ class Shift(models.Model):
             ,"time_out": self.time_out.strftime(DT_FORMAT) if self.time_out is not None else self.time_out
             ,"hours":    str(self.hours) if self.hours is not None else self.hours
             ,"deleted":  self.deleted
+            ,"inTimesheet": self.inTimesheet()
         }
 
 
@@ -443,6 +444,15 @@ class Shift(models.Model):
             self.hours = None
 
         super(Shift, self).save(*args, **kwargs)
+
+    def inTimesheet(self):
+        '''
+        ' Looks to see if shifts is in a timesheet or not.
+        '
+        ' Returns: True if shift is in a timesheet and False otherwise.
+        '''
+
+        return self.timesheet_set.all().count() > 0
 
 
     def can_view(self, user):
@@ -476,6 +486,9 @@ class Shift(models.Model):
 
         if not isinstance(user, Employee):
             raise TypeError('%s is not an Employee' % str(user))
+
+        if self.inTimesheet():
+            return False
 
         if user.is_superuser or user == self.employee:
             return True
