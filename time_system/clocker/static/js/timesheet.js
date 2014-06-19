@@ -38,11 +38,24 @@ $(function() {
         
 
         this.employee = ko.observable().extend({required: "Please select an employee."});
-        
+       
+        this.timesheet_hash = ko.observable(); 
         this.signature = ko.observable();
+        this.signed_on = ko.observable();
+        this.signed_on_format = ko.computed(function() {
+            var signedDate = new Date(this.signed_on()*1000);
+            if (isNaN(signedDate))
+                return ""; 
+            return signedDate.toLocaleDateString();
+        }, this);
+
         this.signAgreement = ko.observable(false).extend({required: "Please Accept the timesheet."});
 
+        this.tampered_with = ko.observable();
+
         this.shifts = ko.observableArray();
+        this.payData = ko.observable();
+        
         this.isBusy = ko.observable(false);
 
         this.timeperiod = ko.computed(function() {
@@ -59,6 +72,11 @@ $(function() {
 
             return employee.first_name + " " + employee.last_name;
         }, this);
+
+        this.canSign = ko.computed(function() {
+            return !this.signature() && !this.isBusy() && this.payData() && !this.tampered_with();
+        }, this);
+
 
         this.belongsToUser = function(user) {
             var employee = this.employee();
@@ -81,6 +99,12 @@ $(function() {
 
             if (vars.hasOwnProperty('employee'))
                 this.employee(vars.employee);
+            
+            if (vars.hasOwnProperty('timesheet_hash'))
+                this.timesheet_hash(vars.timesheet_hash);
+            
+            if (vars.hasOwnProperty('tampered_with'))
+                this.tampered_with(vars.tampered_with);
                        
             if (vars.hasOwnProperty('shifts'))
                 this.shifts(vars.shifts);
@@ -98,6 +122,9 @@ $(function() {
 
             if (vars.hasOwnProperty('signature'))
                 this.signature(vars.signature);
+            
+            if (vars.hasOwnProperty('signed_on'))
+                this.signed_on(vars.signed_on);
         }.bind(this);
 
         this.validateCreation = function() {
@@ -129,7 +156,6 @@ $(function() {
             return this.update(url, requestType, payload).done(__this.rebuild);
         }.bind(this);
 
-        this.payData = ko.observable();
         this.loadPayData = function() {
             if (this.payData())
                 return $.Deferred().resolve().promise();

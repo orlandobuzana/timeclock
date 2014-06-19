@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 
 # System Imports
 from datetime import datetime
+from time import time
 from decimal import Decimal
 import re
 
@@ -740,6 +741,60 @@ class TimesheetManager(models.Manager):
 
         return self.filter(employee=user)
 
+    def createHashStr(self, start, end, username, shifts):
+        '''
+        ' Creates a string appropriate to be hashed for timesheets.
+        ' 
+        ' Keyword Arguments:
+        '   start - Start of pay period as epoch seconds
+        '   end - End of pay period as epoch seconds
+        '   username - Employees username that the timesheet is for
+        '   shifts - QuerySet or list of Shifts.
+        ' 
+        ' Returns: String ready to be encoded.
+        '''
+    
+        strToHash = str(start) + str(end)
+        strToHash += username
+        strToHash += "".join([s.time_in.strftime('%s')+s.time_out.strftime('%s')+s.employee.username for s in shifts]) 
+        return strToHash
+
+
+    def createSignature(self, start, end, username, shifts, timestamp):
+        '''
+        ' Creates hash the marks a timesheet as signed.  Simply uses createHashStr but adds the timestamp to it.
+        '
+        ' Keyword Arguments:
+        '   start - Start of pay period as epoch seconds
+        '   end - End of pay period as epoch seconds
+        '   username - Employees username that the timesheet is for
+        '   shifts - QuerySet or list of Shifts.
+        '   timestamp - Time in seconds since epoch that a timesheet was signed.
+        ' 
+        ' Returns: Hash encoded to base64 and made url safe.
+        '''
+
+        strToHash = self.createHashStr(start, end, username, shifts)
+        strToHash += str(timestamp)
+        return hash64(strToHash);
+
+    
+    def createHash(self, start, end, username, shifts): 
+        '''
+        ' Creates the hash needed to create a timesheet.
+        ' 
+        ' Keyword Arguments:
+        '   start - Start of pay period as epoch seconds
+        '   end - End of pay period as epoch seconds
+        '   username - Employees username that the timesheet is for
+        '   shifts - QuerySet or list of Shifts.
+        ' 
+        ' Returns: Hash encoded to base64 and made url safe.
+        '''
+
+        strToHash = self.createHashStr(start, end, username, shifts)
+        return hash64(strToHash);
+
 
     @transaction.atomic
     def create_timesheets(self, data, user):
@@ -755,10 +810,7 @@ class TimesheetManager(models.Manager):
         ts = Timesheet(**data)
         
         timesheets = self.filter(start__lte=ts.end, end__gte=ts.start, employee=ts.employee)
-        assert timesheets.count() <= 0, "There is already a timesheet for employee %s for this pay period." % str(ts.employee)
-
-        ts.full_clean()
-        ts.save()
+        assert timesheets.count() <= 0, "There is already a timesheet for employee %s that falls within this pay period." % str(ts.employee)
 
         #Need to make sure to encompass the entire day.
         start = datetime.fromtimestamp(ts.start)
@@ -772,6 +824,11 @@ class TimesheetManager(models.Manager):
         end = end.replace(second=59)
 
         shifts = Shift.objects.filter(time_in__gte=start, time_out__lte=end, deleted=False, employee=ts.employee)
+        ts.timesheet_hash = self.createHash(ts.start, ts.end, ts.employee.username, shifts)
+        
+        ts.full_clean()
+        ts.save()
+
         ts.shifts = shifts
 
         return ts
@@ -785,6 +842,8 @@ class Timesheet(models.Model):
     employee = models.ForeignKey('Employee', related_name="timesheet_set")
     hourly_rate = models.DecimalField(max_digits = 5, decimal_places = 2)
     signature = models.TextField(blank=True)
+    signed_on = models.BigIntegerField(null=True, blank=True)
+    timesheet_hash = models.TextField()
 
     objects = TimesheetManager()
 
@@ -799,20 +858,61 @@ class Timesheet(models.Model):
             "start": self.start,
             "end": self.end,
             "employee": self.employee.toDict(),
+            "timesheet_hash": self.timesheet_hash,
             "signature": self.signature,
-            "hourly_rate": str(self.hourly_rate)
+            "signed_on": self.signed_on,
+            "hourly_rate": str(self.hourly_rate),
+            "tampered_with": not self.checkDiff()
         }
 
+    def checkDiff(self):
+        '''
+        ' Validates that the timesheets has not been tampered with.  If the timesheet is signed it will recalculate the signature
+        ' using raw shifts within the pay period.  If it's not signed then it will recalculate the timesheet hash in the same way.
+        '
+        ' Returns: True if all is well and False if something has been tampered with.
+        '''
+
+        #Need to make sure to encompass the entire day.
+        start = datetime.fromtimestamp(self.start)
+        start = start.replace(hour=00)
+        start = start.replace(minute=00)
+        start = start.replace(second=00)
+        
+        end = datetime.fromtimestamp(self.end)
+        end = end.replace(hour=23)
+        end = end.replace(minute=59)
+        end = end.replace(second=59)
+
+        shifts = Shift.objects.filter(time_in__gte=start, time_out__lte=end, deleted=False, employee=self.employee)
+
+        if self.signature == "":
+            params = (self.start, self.end, self.employee.username, shifts)
+            return Timesheet.objects.createHash(*params) == self.timesheet_hash
+        else:
+            params = (self.start, self.end, self.employee.username, shifts, self.signed_on)
+            return Timesheet.objects.createSignature(*params) == self.signature
+
+
     def sign(self, user):
+        '''
+        ' Applies a signature to this timesheet.
+        '
+        ' Keyword Arguments:
+        '   user - Employee whom is attempting to sign this timesheet.
+        '''
+
         assert self.employee_id == user.id, "You may only sign your own timesheets."
         assert self.signature == "", "Timesheet is already signed."
+        assert self.checkDiff(), "Error signing timesheet. Timesheet appears to have been tampered with."
 
-        strToHash = str(self.start) + str(self.end)
-        strToHash += self.employee.username
-        strToHash += "".join([s.time_in.strftime('%s')+s.time_out.strftime('%s')+s.employee.username for s in self.shifts.all()]) 
-        self.signature = hash64(strToHash);
+        now = int(time())
+        params = (self.start, self.end, self.employee.username, self.shifts.all(), now)
+      
+        self.signature = Timesheet.objects.createSignature(*params)
+        self.signed_on = now
+        self.full_clean()
         self.save()
-         
 
 
 

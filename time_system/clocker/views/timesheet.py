@@ -107,7 +107,7 @@ class TimesheetView(View):
             return HttpResponseBadRequest(json.dumps("Timesheet %s does not exist" % str(timesheet_id)), content_type="application/json")
 
         if 'application/json' in accept:
-            return HttpResponse(json.dumps({'timesheetList': timesheets}), content_type="application/json")
+            return HttpResponse(json.dumps({'timesheet': timesheet}), content_type="application/json")
 
         check_db.main()
         start = date.fromtimestamp(timesheet.start)
